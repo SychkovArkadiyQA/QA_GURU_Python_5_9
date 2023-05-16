@@ -2,24 +2,20 @@ import os
 
 from selene import browser, have
 
+from registration_page import RegistrationPage
+
 
 def test_complete_form():
-    browser.open('/automation-practice-form')
+    registration_page = RegistrationPage()
+    registration_page.open()
+    #WHEN
+    registration_page.fill_first_name('Papa')
+    registration_page.fill_last_name('Carlo')
+    registration_page.fill_email('PapaCarlo@example.com')
+    registration_page.select_gender('Male')
+    registration_page.fill_number('9035645454')
+    registration_page.fill_birthday('1997', 'August', '9')
 
-    browser.element('#firstName').type('Papa').click()
-    browser.element('#lastName').type('Carlo').click()
-    browser.element('#userEmail').type('PapaCarlo@example.com')
-
-    browser.element('[name=gender][value=Male]').double_click()
-
-    browser.element('#userNumber').type('9035645454').click()
-
-    browser.element('#dateOfBirthInput').click()
-    browser.element('.react-datepicker__year-select').click()
-    browser.element('.react-datepicker__year-select').element('[value="1997"]').click()
-    browser.element('.react-datepicker__month-select').click()
-    browser.element('.react-datepicker__month-select').element('[value="7"]').click()
-    browser.element('.react-datepicker__day--009').click()
 
     browser.element('#subjectsInput').type('ma').press_enter()
 
