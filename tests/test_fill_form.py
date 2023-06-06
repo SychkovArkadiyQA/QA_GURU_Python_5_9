@@ -1,8 +1,4 @@
-import os
-
-from selene import browser, have
-
-from registration_page import RegistrationPage
+from page_objects.registration_page import RegistrationPage
 
 
 def test_complete_form():
