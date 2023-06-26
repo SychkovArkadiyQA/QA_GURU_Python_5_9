@@ -2,35 +2,48 @@ import os
 
 from selene import browser, have
 
+from data.users import User
+from tests.constants import THANKS_FOR_SUBMITTING_TEXT
+
+
 class RegistrationPage:
+
     def open(self):
         browser.open('/automation-practice-form')
-    def fill_first_name(self, value):
+
+    def fill_in_first_name(self, value):
         browser.element('#firstName').type(value)
-        return self
-    def fill_last_name(self, value):
+
+    def fill_in_last_name(self, value):
         browser.element('#lastName').type(value)
-        return self
-    def fill_email(self, value):
+
+    def fill_in_email(self, value):
         browser.element('#userEmail').type(value)
-        return self
-    def select_gender(self, value):
-        browser.element(f'[name=gender][value={value}]+label').click()
-        return self
-    def fill_number(self, value):
+
+    def pick_gender(self, value):
+        browser.all('.custom-control-label').element_by(have.text(value)).click()
+
+    def fill_in_phone_number(self, value):
         browser.element('#userNumber').type(value)
-        return self
-    def fill_birthday(self, year, month, day):
-        browser.element('#dateOfBirthInput').click()
-        browser.element('.react-datepicker__year-select').type(year)
-        browser.element('.react-datepicker__month-select').type(month)
-        browser.element(f'.react-datepicker__day--00{day}').click()
-    def fill_subject(self, value):
-        browser.element('#subjectsInput').send_keys(value).press_enter()
-    def check_hobby(self, value):
+
+    @property
+    def date_of_birth(self):
+        return browser.element('#dateOfBirthInput')
+
+    def fill_in_date_of_birth(self, date_of_birth):
+        day, month, year = date_of_birth
+        self.date_of_birth.click()
+        browser.execute_script('document.getElementById("dateOfBirthInput").value = ""')
+        self.date_of_birth.send_keys(f'{day} {month} {year}').press_enter()
+
+    def fill_in_subjects(self, value):
+        browser.element('#subjectsInput').type(value).press_enter()
+
+    def pick_hobby(self, value):
         browser.all('.custom-control-label').element_by(have.exact_text(value)).click()
-    def upload_picture(self, value):
-        browser.element('#uploadPicture').send_keys(os.getcwd() + f"/resources/{value}")
+
+    def upload_picture_file(self, value):
+        browser.element('#uploadPicture').send_keys(os.path.abspath(f'../resourсes/{value}'))
 
     def fill_in_address(self, value):
         browser.element('#currentAddress').type(value)
@@ -41,13 +54,48 @@ class RegistrationPage:
     def select_city(self, value):
         browser.element('#city #react-select-4-input').type(value).press_enter()
 
-    def submit(self):
-        browser.element('#submit').execute_script('element.click()')
+    def submit_form(self):
+        browser.execute_script('document.getElementById("submit").click()')
 
+    def assert_form_submission_text(self, expected_text):
+        browser.element('#example-modal-sizes-title-lg').should(have.text(expected_text))
 
-    def assert_user_data(self, *values):
-        browser.all('tbody tr').should(have.exact_texts(values))
+    def assert_user_data(self, student: User):
+        full_name = f'{student.first_name} {student.last_name}'
+        full_birthday = f'{student.date_of_birth[0]} {student.date_of_birth[1]},{student.date_of_birth[2]}'
+        expected_values = [
+            f'Student Name {full_name}',
+            f'Student Email {student.email}',
+            f'Gender {student.gender}',
+            f'Mobile {student.phone_number}',
+            f'Date of Birth {full_birthday}',
+            f'Subjects {student.subject}',
+            f'Hobbies {student.hobby}',
+            f'Picture {student.picture_file}',
+            f'Address {student.address}',
+            f'State and City {student.state} {student.city}'
+        ]
+        browser.all('tbody tr').should(have.exact_texts(*expected_values))
 
     def close_submission_form(self):
         browser.element('#closeLargeModal').click()
 
+    def register(self, student: User):
+        self.fill_in_first_name(student.first_name)
+        self.fill_in_last_name(student.last_name)
+        self.fill_in_email(student.email)
+        self.pick_gender(student.gender)
+        self.fill_in_phone_number(student.phone_number)
+        self.fill_in_date_of_birth(student.date_of_birth)
+        self.fill_in_subjects(student.subject)
+        self.pick_hobby(student.hobby)
+        self.upload_picture_file(student.picture_file)
+        self.fill_in_address(student.address)
+        self.select_state(student.state)
+        self.select_city(student.city)
+        self.submit_form()
+        self.assert_form_submission_text(THANKS_FOR_SUBMITTING_TEXT)
+
+    def should_have_registered(self, student: User):
+        self.assert_user_data(student)
+        self.close_submission_form()
