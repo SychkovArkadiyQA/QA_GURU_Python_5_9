@@ -9,4 +9,3 @@ def test_registration_form():
     registration_page.should_have_registered(student)
 
 
-

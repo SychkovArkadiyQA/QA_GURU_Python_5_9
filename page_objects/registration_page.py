@@ -43,7 +43,7 @@ class RegistrationPage:
         browser.all('.custom-control-label').element_by(have.exact_text(value)).click()
 
     def upload_picture_file(self, value):
-        browser.element('#uploadPicture').send_keys(os.path.abspath(f'../resourсes/{value}'))
+        browser.element('#uploadPicture').send_keys(os.path.abspath(f'../resources/{value}'))
 
     def fill_in_address(self, value):
         browser.element('#currentAddress').type(value)
@@ -75,7 +75,7 @@ class RegistrationPage:
             f'Address {student.address}',
             f'State and City {student.state} {student.city}'
         ]
-        browser.all('tbody tr').should(have.exact_texts(*expected_values))
+        browser.all("tbody tr").should(have.exact_texts(*expected_values))
 
     def close_submission_form(self):
         browser.element('#closeLargeModal').click()
@@ -99,3 +99,4 @@ class RegistrationPage:
     def should_have_registered(self, student: User):
         self.assert_user_data(student)
         self.close_submission_form()
+
