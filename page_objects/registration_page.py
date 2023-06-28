@@ -43,7 +43,7 @@ class RegistrationPage:
         browser.all('.custom-control-label').element_by(have.exact_text(value)).click()
 
     def upload_picture(self, value):
-        browser.element('#uploadPicture').send_keys(os.getcwd() + f"/resources/{value}")
+        browser.element('#uploadPicture').send_keys(os.getcwd()[:24] + f"/resources/{value}")
 
     def fill_in_address(self, value):
         browser.element('#currentAddress').type(value)
