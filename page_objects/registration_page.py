@@ -2,6 +2,7 @@ import os
 
 from selene import browser, have
 
+
 class RegistrationPage:
     def open(self):
         browser.open('/automation-practice-form')
