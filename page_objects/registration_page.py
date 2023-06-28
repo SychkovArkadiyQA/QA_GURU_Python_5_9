@@ -42,8 +42,8 @@ class RegistrationPage:
     def pick_hobby(self, value):
         browser.all('.custom-control-label').element_by(have.exact_text(value)).click()
 
-    def upload_picture_file(self, value):
-        browser.element('#uploadPicture').send_keys(os.path.abspath(f'../resources/{value}'))
+    def upload_picture(self, value):
+        browser.element('#uploadPicture').send_keys(os.getcwd() + f"/resources/{value}")
 
     def fill_in_address(self, value):
         browser.element('#currentAddress').type(value)
@@ -89,7 +89,7 @@ class RegistrationPage:
         self.fill_in_date_of_birth(student.date_of_birth)
         self.fill_in_subjects(student.subject)
         self.pick_hobby(student.hobby)
-        self.upload_picture_file(student.picture_file)
+        self.upload_picture(student.picture_file)
         self.fill_in_address(student.address)
         self.select_state(student.state)
         self.select_city(student.city)
